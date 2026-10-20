@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Task Manager - DevOps Mini Project</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 520px; margin: 40px auto; padding: 0 16px; }
+    li { margin: 6px 0; cursor: pointer; }
+    .done { text-decoration: line-through; color: #888; }
+    input { padding: 6px; width: 70%; }
+    button { padding: 6px 12px; }
+  </style>
+</head>
+<body>
+  <h2>Task Manager</h2>
+  <p>Deployed through a Git &rarr; GitHub Actions &rarr; Docker pipeline.</p>
+  <input id="title" placeholder="New task...">
+  <button onclick="addTask()">Add</button>
+  <ul id="list"></ul>
+  <script>
+    async function load() {
+      const res = await fetch('/api/tasks');
+      const tasks = await res.json();
+      const ul = document.getElementById('list');
+      ul.innerHTML = '';
+      tasks.forEach(t => {
+        const li = document.createElement('li');
+        li.textContent = t.title;
+        if (t.done) li.className = 'done';
+        li.onclick = async () => { await fetch('/api/tasks/' + t.id, {method: 'PUT'}); load(); };
+        ul.appendChild(li);
+      });
+    }
+    async function addTask() {
+      const input = document.getElementById('title');
+      if (!input.value.trim()) return;
+      await fetch('/api/tasks', {method: 'POST', headers: {'Content-Type': 'application/json'},
+                                 body: JSON.stringify({title: input.value})});
+      input.value = '';
+      load();
+    }
+    load();
+  </script>
+</body>
+</html>
