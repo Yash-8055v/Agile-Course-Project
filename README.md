@@ -33,3 +33,7 @@ curl http://localhost:5000/health
 | POST | /api/tasks | Add task `{"title": "..."}` |
 | PUT | /api/tasks/<id> | Toggle done |
 | DELETE | /api/tasks/<id> | Delete task |
+
+## Made by
+Yash 
+Siddhesh
